@@ -1,4 +1,3 @@
-
 // server.js
 const express = require('express');
 const mongoose = require('mongoose');
@@ -16,26 +15,27 @@ const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/users');
 const messageRoutes = require('./routes/messages');
-const notificationRoutes = require('./routes/notificationRoutes'); // 🟢 Fixed: Changed from import to require
+const notificationRoutes = require('./routes/notificationRoutes'); 
 const { socketManager } = require('./socket/socketManager');
 
 const app = express();
 const server = http.createServer(app);
 
-// PERFECTED SOCKET CONNECTIONS CORNERSTONE WITH FALLBACK PROTOCOLS
+// Array of Allowed Origins for both Express and Socket.io
+const ALLOWED_ORIGINS = [
+  'https://socialblog-app-frontend.vercel.app', // Live Frontend URL
+  'http://localhost:5173'                        // Local Frontend URL
+];
+
+// ✅ FIXED: Socket CORS Structure Cleaned
 const io = socketio(server, {
   cors: { 
-    cors: { 
-  origin: [
-    'https://socialblog-app-frontend.vercel.app', // Live Frontend URL
-    'http://localhost:5173'                        // Local Frontend URL
-  ], 
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"] // Baki methods bhi handle ho jayein ge
-}
+    origin: ALLOWED_ORIGINS, 
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"]
   },
-  transports: ['polling', 'websocket'], // Step 1: Handshake, Step 2: Instant Upgrade
-  allowEIO3: true // Backward compatibility support frameworks
+  transports: ['polling', 'websocket'], 
+  allowEIO3: true 
 });
 
 // Uploads Production Workspace Sync
@@ -44,12 +44,13 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
-// Global Middlewares Pipeline
+// ✅ FIXED: Global Middlewares Pipeline (Ab Frontend block nahi hoga)
 app.use(cors({ 
-  origin: process.env.CLIENT_URL || 'http://localhost:5173', 
+  origin: ALLOWED_ORIGINS, 
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadsDir));
@@ -59,9 +60,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/notifications', notificationRoutes); // 🟢 Notification Route Registered
+app.use('/api/notifications', notificationRoutes); 
 
-// Root Diagnostics Node Vector (Optional but great for checking server status)
+// Root Diagnostics Node Vector
 app.get('/', (req, res) => {
   res.json({ message: "MERN Stack Core Server Ecosystem Active 🚀" });
 });
