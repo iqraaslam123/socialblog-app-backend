@@ -28,13 +28,23 @@ const ALLOWED_ORIGINS = [
 ];
 
 // ✅ FIXED: Socket CORS Structure Cleaned
+// const io = socketio(server, {
+//   cors: { 
+//     origin: ALLOWED_ORIGINS, 
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE"]
+//   },
+//   transports: ['polling', 'websocket'], 
+//   allowEIO3: true 
+// });
+// server.js
 const io = socketio(server, {
   cors: { 
     origin: ALLOWED_ORIGINS, 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"]
   },
-  transports: ['polling', 'websocket'], 
+  transports: ['polling'], // ✅ WebSocket hata do
   allowEIO3: true 
 });
 
