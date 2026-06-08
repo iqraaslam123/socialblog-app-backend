@@ -188,7 +188,7 @@ router.put('/me', auth, upload.single('profilePicture'), async (req, res) => {
     // Check karein ke image file aayi hai ya direct URL link
     if (req.file) {
       // Option 1: Agar user ne device se file select karke bheji hai
-      update.profilePicture = `/uploads/${req.file.filename}`;
+      update.profilePicture = `/uploads/${req.file.path}`;
     } else if (profilePicUrl) {
       // Option 2: Agar user ne DiceBear / AI URL select kiya hai
       update.profilePicture = profilePicUrl;
